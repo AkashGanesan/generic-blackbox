@@ -42,15 +42,16 @@ class CVAE(nn.Module):
         self.params = params
         self.encoder = CVAEEncoder(params.enc_config)
         self.decoder = CVAEDecoder(params.dec_config)
-        self.latent_size = params.enc_config[0][0] - params.cond_size
-
+        self.latent_size = params.enc_config[-1][1]
+        
     def forward(self, x, c=None):
         batch_size = x.size(0)
 
         means, log_var = self.encoder(x, c)
 
         std = torch.exp(0.5 * log_var)
-        eps = to_var(torch.randn([batch_size, self.latent_size]))
+        
+        eps = torch.randn([batch_size, self.latent_size]).to(x.device)
         z = eps * std + means
 
         recon_x = self.decoder(z, c)
@@ -58,7 +59,8 @@ class CVAE(nn.Module):
         return recon_x, means, log_var, z
 
     def inference(self, c=None, batch_size=1):
-        z = torch.randn([batch_size, self.latent_size])
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        z = torch.randn([batch_size, self.latent_size]).to(device)
         recon_x = self.decoder(z, c=None)
         return recon_x
 
@@ -97,7 +99,7 @@ class CVAEDecoder(nn.Module):
         self.params = params
 
         self.MLP = nn.Sequential()
-        for i, (in_size, out_size, activation) in enumerate(params[-1]):
+        for i, (in_size, out_size, activation) in enumerate(params):
             self.MLP.add_module(name="L%i" % (i),
                                 module=nn.Linear(in_size, out_size))
             if activation is not None:
