@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 import typing as ty
 import torch
 import torch.nn as nn
-from ..prims import Exp
+from blackbox.prims import Exp
 
 
 @dataclass
@@ -37,7 +37,7 @@ class CVAEParams:
 class CVAE(nn.Module):
 
     def __init__(self,
-                 params: VAEParams):
+                 params: CVAEParams):
         super(CVAE, self).__init__()
         self.params = params
         self.encoder = CVAEEncoder(params.enc_config)
@@ -80,8 +80,9 @@ class CVAEEncoder(nn.Module):
         self.linear_means = nn.Linear(*params[-1][0:2])
         self.linear_log_var = nn.Linear(*params[-1][0:2])
 
-    def forward(self, x, c):
-        x = torch.cat([x, c], dim=-1)
+    def forward(self, x, c=None):
+        if c is not None:
+            x = torch.cat([x, c], dim=-1)
         x = self.MLP(x)
         means = self.linear_means(x)
         logvars = self.linear_log_var(x)
