@@ -5,16 +5,16 @@ with open("README.org", "r") as fh:
     long_description = fh.read()
 
 install_requires = ['numpy',
-                    'torch'
+                    'torch >=1.0.0',
                     'setuptools']
 
-tests_require = ['Pillow',
-                 'requests']
+# tests_require = ['Pillow',
+#                  'requests']
 
 # docs_require = ['sphinx >= 1.4',
 #                 'sphinx_rtd_theme']
 
-setup(name='BlackBoxDL',
+setup(name='generic-blackbox',
       version='0.0.1',
       description='Custom DL models package ',
       long_description=long_description,
@@ -24,11 +24,11 @@ setup(name='BlackBoxDL',
       url='https://github.com/AkashGanesan/generic-blackbox',
       license='MIT',
       install_requires=install_requires,
-      tests_require=tests_require,
-      extras_require={
-          'tests': tests_require,
-          'docs': docs_require
-      },
+      # tests_require=tests_require,
+      # extras_require={
+      #     'tests': tests_require,
+      #     #'docs': docs_require
+      # },
       classifiers=[
             'Development Status :: Pre-Alpha',
             'Intended Audience :: Developers',
