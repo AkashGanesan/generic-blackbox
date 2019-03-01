@@ -71,7 +71,7 @@ class CVAEEncoder(nn.Module):
         self.params = params
 
         self.MLP = nn.Sequential()
-        for i, (in_size, out_size, activation) in enumerate(params):
+        for i, (in_size, out_size, activation) in enumerate(params[:-1]):
             self.MLP.add_module(name="L%i" % (i),
                                 module=nn.Linear(in_size, out_size))
             if activation is not None:
@@ -97,7 +97,7 @@ class CVAEDecoder(nn.Module):
         self.params = params
 
         self.MLP = nn.Sequential()
-        for i, (in_size, out_size, activation) in enumerate(params):
+        for i, (in_size, out_size, activation) in enumerate(params[-1]):
             self.MLP.add_module(name="L%i" % (i),
                                 module=nn.Linear(in_size, out_size))
             if activation is not None:
